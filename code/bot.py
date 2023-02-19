@@ -29,13 +29,11 @@ db = database.Database("bot.db")
 db.create_moderation_table()
 db.create_ticket_table()
 
-logging.basicConfig(level=logging.INFO)
-
 
 @bot.event
 async def on_ready():
     print(f'{bot.user} BETA is connected')
-    await bot.change_presence(activity=Game('BETA Test Bot'))
+    await bot.change_presence(activity=Game('BETA Bot'))
 
 
 # Moderation commands
@@ -356,7 +354,7 @@ async def minecraftip(interaction: ApplicationContext):
                     value="Falls du Hilfe brauchst oder Fragen hast, dann kannst du jeder Zeit ein <#1072479021008429066> Ticket erstellen. Unser Team kümmert sich um dich.", inline=False)
     await interaction.respond("Viel Spass auf dem Minecraft Server!", ephemeral=True)
     await interaction.channel.send(embed=embed)
-    
+
 
 bot.run(TOKEN)
 db.connection.close()
