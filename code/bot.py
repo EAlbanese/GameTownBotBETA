@@ -343,5 +343,20 @@ async def suggestion(interaction: ApplicationContext):
     await interaction.channel.send(embed=embed, view=SuggestionView())
 
 
+# Minecraft Server IP
+@bot.slash_command(description="Minecraft Server IP-Adresse")
+async def minecraftip(interaction: ApplicationContext):
+    embed = Embed(
+        title=f'Join auf unseren Minecraft Server',
+        description='Wir wünschen dir und deinen Freunden viel Spass ❤',
+    )
+    embed.add_field(name="IP-Adresse",
+                    value="eu4789457.g-portal.game", inline=False)
+    embed.add_field(name="Brauchst du Hilfe?",
+                    value="Falls du Hilfe brauchst oder Fragen hast, dann kannst du jeder Zeit ein <#1072479021008429066> Ticket erstellen. Unser Team kümmert sich um dich.", inline=False)
+    await interaction.respond("Viel Spass auf dem Minecraft Server!", ephemeral=True)
+    await interaction.channel.send(embed=embed)
+    
+
 bot.run(TOKEN)
 db.connection.close()
