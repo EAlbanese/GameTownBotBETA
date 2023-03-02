@@ -45,6 +45,7 @@ class Database:
         return cursor.execute(
             f'SELECT * FROM penalties WHERE server_id={server_id} AND user_id={user_id} ORDER BY id DESC LIMIT 25;').fetchall()
 
+
 # Teammember
 
     def create_team_table(self):
@@ -57,11 +58,11 @@ class Database:
         except Exception as ex:
             print(f'EXCEPTION: {ex}')
 
-    def create_member(self, user_id: int, role: str):
+    def create_member(self, userid: int, role: str):
         cursor = self.connection.cursor()
 
         cursor.execute(
-            f'INSERT INTO team (user_id, role) VALUES (?, ?);', (user_id, role))
+            f'INSERT INTO team (userid, role) VALUES (?, ?);', (userid, role))
         self.connection.commit()
 
     def get_member_by_manager(self, role: str):
@@ -83,6 +84,22 @@ class Database:
         cursor = self.connection.cursor()
         return cursor.execute(
             f'SELECT * FROM team WHERE role={role}').fetchall()
+
+    def get_member_by_builder(self, role: str):
+        cursor = self.connection.cursor()
+        return cursor.execute(
+            f'SELECT * FROM team WHERE role={role}').fetchall()
+
+    def get_member_by_content(self, role: str):
+        cursor = self.connection.cursor()
+        return cursor.execute(
+            f'SELECT * FROM team WHERE role={role}').fetchall()
+
+    def get_member_by_designer(self, role: str):
+        cursor = self.connection.cursor()
+        return cursor.execute(
+            f'SELECT * FROM team WHERE role={role}').fetchall()
+
 
 # Ticket
 

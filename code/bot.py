@@ -27,6 +27,7 @@ db = database.Database("bot.db")
 
 # db.drop_db()
 db.create_moderation_table()
+db.create_team_table()
 db.create_ticket_table()
 
 
@@ -134,6 +135,34 @@ async def ban(
         return await interaction.respond('Sieht so aus als hätte ich keine Berechtigungen um den Member zu bannen.')
 
     await punish(interaction, PunishmentType.BAN, interaction.guild_id, member, interaction.author.id, reason, punishment_end)
+
+# Add new Teammember
+
+
+async def addteammember(interaction: ApplicationContext, member: Member, role: str):
+    db.create_member(member.id, role)
+
+    embed = Embed(
+        title=f'{member.display_name} wurde als {role} in das Team hinzugefügt',
+        fields=[
+            EmbedField(
+                name='Neues Teammitglied',
+                value=member.display_name + " " + role
+            )
+        ]
+    )
+
+    await interaction.respond(embed=embed, ephemeral=True)
+
+
+@bot.slash_command(description="Teammitglied hinzufügen")
+async def addtoteam(
+    interaction: ApplicationContext,
+    member: Option(Member, 'Select the user'),
+    role: Option(str, 'Rolle (Manager ist 1 und Designer 7)')
+):
+    await addteammember(interaction, member, role)
+
 # Welcomer
 
 
@@ -215,6 +244,15 @@ async def rules(interaction: ApplicationContext):
 
 @ bot.slash_command(description="Team")
 async def team(interaction: ApplicationContext):
+
+    manager: db.get_member_by_manager("manager")
+    headmod: db.get_member_by_headmod("headmod")
+    mod: db.get_member_by_mod("mod")
+    supp: db.get_member_by_supp("supp")
+    builder: db.get_member_by_builder("builder")
+    content: db.get_member_by_content("content")
+    designer: db.get_member_by_designer("designer")
+
     embed = Embed(
         title=f'Game Town Team',
         fields=[
@@ -222,8 +260,6 @@ async def team(interaction: ApplicationContext):
                 name='Owner', value=f'⟫<@479537494384181248> \n⟫<@187599309070401541>'),
             EmbedField(name='Administrator',
                        value=f'Nicht besetzt'),
-            EmbedField(
-                name='Head Manager', value=f'Nicht besetzt'),
             EmbedField(
                 name='Manager', value=f'Nicht besetzt'),
             EmbedField(
