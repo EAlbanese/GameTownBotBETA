@@ -245,13 +245,54 @@ async def rules(interaction: ApplicationContext):
 @ bot.slash_command(description="Team")
 async def team(interaction: ApplicationContext):
 
-    manager: db.get_member_by_manager("manager")
-    headmod: db.get_member_by_headmod("headmod")
-    mod: db.get_member_by_mod("mod")
-    supp: db.get_member_by_supp("supp")
-    builder: db.get_member_by_builder("builder")
-    content: db.get_member_by_content("content")
-    designer: db.get_member_by_designer("designer")
+    manager_list = db.get_member_by_manager("manager")
+    if len(manager_list) > 0:
+        manager_value = "\n".join(
+            [f"<@{m[1]}>" for m in manager_list])
+    else:
+        manager_value = "Nicht besetzt"
+
+    headmod_list = db.get_member_by_headmod("headmod")
+    if len(headmod_list) > 0:
+        headmod_value = "\n".join(
+            [f"<@{m[1]}>" for m in headmod_list])
+    else:
+        headmod_value = "Nicht besetzt"
+
+    mod_list = db.get_member_by_mod("mod")
+    if len(mod_list) > 0:
+        mod_value = "\n".join(
+            [f"<@{m[1]}>" for m in mod_list])
+    else:
+        mod_value = "Nicht besetzt"
+
+    supp_list = db.get_member_by_supp("supp")
+    if len(supp_list) > 0:
+        supp_value = "\n".join(
+            [f"<@{m[1]}>" for m in supp_list])
+    else:
+        supp_value = "Nicht besetzt"
+
+    builder_list = db.get_member_by_builder("builder")
+    if len(builder_list) > 0:
+        builder_value = "\n".join(
+            [f"<@{m[1]}>" for m in builder_list])
+    else:
+        builder_value = "Nicht besetzt"
+
+    content_list = db.get_member_by_content("content")
+    if len(content_list) > 0:
+        content_value = "\n".join(
+            [f"<@{m[1]}>" for m in content_list])
+    else:
+        content_value = "Nicht besetzt"
+
+    designer_list = db.get_member_by_designer("designer")
+    if len(designer_list) > 0:
+        designer_value = "\n".join(
+            [f"<@{m[1]}>" for m in designer_list])
+    else:
+        designer_value = "Nicht besetzt"
 
     embed = Embed(
         title=f'Game Town Team',
@@ -261,17 +302,19 @@ async def team(interaction: ApplicationContext):
             EmbedField(name='Administrator',
                        value=f'Nicht besetzt'),
             EmbedField(
-                name='Manager', value=f'Nicht besetzt'),
+                name='Manager', value=manager_value),
             EmbedField(
-                name='Head Moderator', value=f'Nicht besetzt'),
+                name='Head Moderator',  value=headmod_value),
             EmbedField(
-                name='Moderator', value=f'Nicht besetzt'),
+                name='Moderator',  value=mod_value),
             EmbedField(
-                name='Test-Supporter / Supporter', value=f'Nicht besetzt'),
+                name='Test-Supporter / Supporter',  value=supp_value),
             EmbedField(
-                name='Content Creator', value=f'Nicht besetzt'),
+                name='Builder',  value=builder_value),
             EmbedField(
-                name='Designer', value=f'Nicht besetzt \n \n \n Wenn du Hilfe brauchst, kannst du eine <#1072473811162771486> eröffnen und unsere Mitarbeiter werden sich um dein Anliegen kümmern.'),
+                name='Content Creator',  value=content_value),
+            EmbedField(
+                name='Designer', value=designer_value + f'\n \n \n Wenn du Hilfe brauchst, kannst du eine <#1072473811162771486> eröffnen und unsere Mitarbeiter werden sich um dein Anliegen kümmern.'),
         ],
     )
     embed.set_thumbnail(

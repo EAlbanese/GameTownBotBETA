@@ -68,38 +68,42 @@ class Database:
     def get_member_by_manager(self, role: str):
         cursor = self.connection.cursor()
         return cursor.execute(
-            f'SELECT * FROM team WHERE role={role}').fetchall()
+            f'SELECT * FROM team WHERE role=?', (role,)).fetchall()
 
     def get_member_by_headmod(self, role: str):
         cursor = self.connection.cursor()
         return cursor.execute(
-            f'SELECT * FROM team WHERE role={role}').fetchall()
+            f'SELECT * FROM team WHERE role=?', (role,)).fetchall()
 
     def get_member_by_mod(self, role: str):
         cursor = self.connection.cursor()
         return cursor.execute(
-            f'SELECT * FROM team WHERE role={role}').fetchall()
+            f'SELECT * FROM team WHERE role=?', (role,)).fetchall()
 
     def get_member_by_supp(self, role: str):
         cursor = self.connection.cursor()
         return cursor.execute(
-            f'SELECT * FROM team WHERE role={role}').fetchall()
+            f'SELECT * FROM team WHERE role=?', (role,)).fetchall()
 
     def get_member_by_builder(self, role: str):
         cursor = self.connection.cursor()
         return cursor.execute(
-            f'SELECT * FROM team WHERE role={role}').fetchall()
+            f'SELECT * FROM team WHERE role=?', (role,)).fetchall()
 
     def get_member_by_content(self, role: str):
         cursor = self.connection.cursor()
         return cursor.execute(
-            f'SELECT * FROM team WHERE role={role}').fetchall()
+            f'SELECT * FROM team WHERE role=?', (role,)).fetchall()
 
     def get_member_by_designer(self, role: str):
         cursor = self.connection.cursor()
         return cursor.execute(
-            f'SELECT * FROM team WHERE role={role}').fetchall()
+            f'SELECT * FROM team WHERE role=?', (role,)).fetchall()
 
+    def get_all_member(self):
+        cursor = self.connection.cursor()
+        return cursor.execute(
+            f'SELECT * FROM team ').fetchall()
 
 # Ticket
 
