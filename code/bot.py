@@ -136,7 +136,7 @@ async def ban(
 
     await punish(interaction, PunishmentType.BAN, interaction.guild_id, member, interaction.author.id, reason, punishment_end)
 
-# Add new Teammember
+# Add new Teammember & Team Embed
 
 
 async def addteammember(interaction: ApplicationContext, member: Member, role: str):
@@ -155,6 +155,24 @@ async def addteammember(interaction: ApplicationContext, member: Member, role: s
     await interaction.respond(embed=embed, ephemeral=True)
 
 
+async def deleteteammember(interaction: ApplicationContext, member: Member):
+    print(member.id)
+    print(db.get_all_member())
+    db.delete_member(member.id)
+
+    embed = Embed(
+        title=f'{member.display_name} wurde aus dem Team entfernt',
+        fields=[
+            EmbedField(
+                name='Teammitglied gelöscht',
+                value=member.display_name
+            )
+        ]
+    )
+
+    await interaction.respond(embed=embed, ephemeral=True)
+
+
 @bot.slash_command(description="Teammitglied hinzufügen")
 async def addtoteam(
     interaction: ApplicationContext,
@@ -162,6 +180,14 @@ async def addtoteam(
     role: Option(str, 'Rolle (Manager ist 1 und Designer 7)')
 ):
     await addteammember(interaction, member, role)
+
+
+@bot.slash_command(description="Teammitglied löschen")
+async def deletefromteam(
+    interaction: ApplicationContext,
+    member: Option(Member, 'Select the user')
+):
+    await deleteteammember(interaction, member)
 
 # Welcomer
 
