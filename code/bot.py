@@ -7,7 +7,7 @@ from discord import (ApplicationContext, Bot, Embed,
                      EmbedField, Member, Option, Permissions, Button, PartialEmoji, Game, File, Intents)
 from enums import PunishmentType
 from pytimeparse.timeparse import timeparse
-from views import SupportTicketCreateView, MinecraftTicketCreateView, ReportUserModal, SupportModal, BugReportCreateView, SuggestionView
+from views import SupportTicketCreateView, MinecraftTicketCreateView, ReportUserModal, SupportModal, BugReportCreateView, SuggestionView, BanappealModal, BannappealView
 from PIL import Image, ImageDraw, ImageFont
 # import requests
 import io
@@ -136,6 +136,18 @@ async def ban(
 
     await punish(interaction, PunishmentType.BAN, interaction.guild_id, member, interaction.author.id, reason, punishment_end)
 
+    banneduser = await interaction.client.fetch_user(member.id)
+
+    print(banneduser)
+
+    embed = Embed(
+        title=f'Du wurdest für {duration} wegen {reason} gebannt.',
+        description='Schreibe einen Entbannungsantrag, damit unser Team sich darum kümmern kann.',
+    )
+    await interaction.respond("Danke für den Vorschlag!", ephemeral=True)
+    await banneduser.send(embed=embed, view=BannappealView())
+    await interaction.channel.send(view=BanappealModal())
+
 # Add new Teammember & Team Embed
 
 
@@ -193,10 +205,22 @@ async def deletefromteam(
 
 
 @bot.event
-async def on_member_join(member):
-    print("FUCK MY LIFE")
-    channel = bot.get_channel(1038812807216496640)
-    await channel.send(f'Hey <@{member.user.id}>, willkommen auf **Game Town**!')
+async def on_member_join(member: Member):
+    welcomeembed = Embed(
+        title=f'Herzlich willkommen auf Game Town 🥳',
+        description=f'Hey <@{member.id}> <:pikachu_love:1042727900996173884> \n \n Lies dir bitte die <#1072470105776193586> und das <#1072470606706126848> durch',
+        fields=[
+            EmbedField(
+                name='Wir wünschen dir viel Spass ! ❤️',
+                value=''
+            ),
+        ],
+    )
+
+    welcome = bot.get_channel(1082953932575358976)
+    channel = bot.get_channel(1082957528842907719)
+    await welcome.send(embed=welcomeembed)
+    await channel.send(f'**Hey <@{member.id}> herzlich willkommen <:pikachu_love:1042727900996173884>**')
 
 # Information category Embeds
 
