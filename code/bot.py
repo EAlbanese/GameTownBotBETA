@@ -7,7 +7,7 @@ from discord import (ApplicationContext, Bot, Embed,
                      EmbedField, Member, Option, Permissions, Button, PartialEmoji, Game, File, Intents)
 from enums import PunishmentType
 from pytimeparse.timeparse import timeparse
-from views import SupportTicketCreateView, MinecraftTicketCreateView, ReportUserModal, SupportModal, BugReportCreateView, SuggestionView, BanappealModal, BannappealView
+from views import SupportTicketCreateView, MinecraftTicketCreateView, ReportUserModal, SupportModal, BugReportCreateView, SuggestionView, BanappealModal, BannappealView, BoosterRolesView
 from PIL import Image, ImageDraw, ImageFont
 # import requests
 import io
@@ -559,6 +559,20 @@ async def minecraftip(interaction: ApplicationContext):
                     value="Falls du Hilfe brauchst oder Fragen hast, dann kannst du jeder Zeit ein <#1072479021008429066> Ticket erstellen. Unser Team kümmert sich um dich.", inline=False)
     await interaction.respond("Viel Spass auf dem Minecraft Server!", ephemeral=True)
     await interaction.channel.send(embed=embed)
+
+
+# Booster Roles Dropdown
+@bot.slash_command(description="Booster-Rollen Dropdown")
+async def boosterroles(interaction: ApplicationContext):
+    embed = Embed(
+        title=f'Deine Booster Rolle für den Main Chat',
+        description='Vielen lieben Dank für deinen Boost ! ❤️ \n \n Such dir eine Rolle aus, damit du im Main Chat auffällst!',
+    )
+    embed.set_image(
+        url='https://media.discordapp.net/attachments/1019566455601238017/1085476151587246131/banner2.png?width=705&height=396')
+
+    await interaction.respond("Embed wurde erstellt", ephemeral=True)
+    await interaction.channel.send(embed=embed, view=BoosterRolesView())
 
 
 bot.run(TOKEN)

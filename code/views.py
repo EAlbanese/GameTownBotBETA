@@ -1,4 +1,4 @@
-from discord import ui, ButtonStyle, InputTextStyle, Interaction, Embed, PermissionOverwrite, Client, ChannelType
+from discord import ui, ButtonStyle, InputTextStyle, Interaction, Embed, PermissionOverwrite, Client, ChannelType, SelectOption
 import database as database
 import datetime
 
@@ -382,3 +382,103 @@ class BannappealView(ui.View):
     @ui.button(emoji="📬", label="Entbannungsantrag", style=ButtonStyle.primary)
     async def report_bug(self, button, interaction):
         await interaction.response.send_modal(BanappealModal(title="Entbannungsantrag schreiben"))
+
+
+# Booster Rollen Dropdown
+class BoosterRolesView(ui.View):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs, timeout=None)
+
+    @ui.select(
+        placeholder="Suche dir eine Booster Rolle aus",
+        min_values=1,
+        max_values=1,
+        options=[
+            SelectOption(
+                label="☃️",
+                value='1'
+            ),
+            SelectOption(
+                label="🧊",
+                value='2'
+            ),
+            SelectOption(
+                label="🖤",
+                value='3'
+            ),
+            SelectOption(
+                label="🍊",
+                value='4'
+            ),
+            SelectOption(
+                label="💛",
+                value='5'
+            ),
+            SelectOption(
+                label=":purple_heart:",
+                value='6'
+            ),
+        ]
+    )
+    async def select_callback(self, select, interaction: Interaction):
+        await interaction.response.defer()
+        snowwhite = interaction.guild.get_role(1087310504483110964)
+        iceblue = interaction.guild.get_role(1087310528373862473)
+        blacksoul = interaction.guild.get_role(1087310547420184616)
+        orange = interaction.guild.get_role(1087310566072258580)
+        gelb = interaction.guild.get_role(1087310586435616839)
+        pink = interaction.guild.get_role(1087310603464478750)
+        if select.values[0] == "1":
+            if iceblue in interaction.user.roles or blacksoul in interaction.user.roles or orange in interaction.user.roles or gelb in interaction.user.roles or pink in interaction.user.roles:
+                await interaction.user.remove_roles(iceblue)
+                await interaction.user.remove_roles(blacksoul)
+                await interaction.user.remove_roles(orange)
+                await interaction.user.remove_roles(gelb)
+                await interaction.user.remove_roles(pink)
+                await interaction.user.add_roles(snowwhite)
+                await interaction.followup.send(f"✅ Du hast die <@&1087310504483110964> Rolle erhalten.", ephemeral=True)
+        if select.values[0] == "2":
+            if snowwhite in interaction.user.roles or blacksoul in interaction.user.roles or orange in interaction.user.roles or gelb in interaction.user.roles or pink in interaction.user.roles:
+                await interaction.user.remove_roles(snowwhite)
+                await interaction.user.remove_roles(blacksoul)
+                await interaction.user.remove_roles(orange)
+                await interaction.user.remove_roles(gelb)
+                await interaction.user.remove_roles(pink)
+                await interaction.user.add_roles(iceblue)
+                await interaction.followup.send(f"✅ Du hast die <@&1087310528373862473> Rolle erhalten.", ephemeral=True)
+        if select.values[0] == "3":
+            if snowwhite in interaction.user.roles or iceblue in interaction.user.roles or iceblue in interaction.user.roles or gelb in interaction.user.roles or pink in interaction.user.roles:
+                await interaction.user.remove_roles(snowwhite)
+                await interaction.user.remove_roles(iceblue)
+                await interaction.user.remove_roles(orange)
+                await interaction.user.remove_roles(gelb)
+                await interaction.user.remove_roles(pink)
+                await interaction.user.add_roles(blacksoul)
+                await interaction.followup.send(f"✅ Du hast die <@&1087310547420184616> Rolle erhalten.", ephemeral=True)
+        if select.values[0] == "4":
+            if snowwhite in interaction.user.roles or blacksoul in interaction.user.roles or iceblue in interaction.user.roles or gelb in interaction.user.roles or pink in interaction.user.roles:
+                await interaction.user.remove_roles(snowwhite)
+                await interaction.user.remove_roles(blacksoul)
+                await interaction.user.remove_roles(iceblue)
+                await interaction.user.remove_roles(gelb)
+                await interaction.user.remove_roles(pink)
+                await interaction.user.add_roles(orange)
+                await interaction.followup.send(f"✅ Du hast die <@&1087310566072258580> Rolle erhalten.", ephemeral=True)
+        if select.values[0] == "5":
+            if snowwhite in interaction.user.roles or blacksoul in interaction.user.roles or orange in interaction.user.roles or iceblue in interaction.user.roles or pink in interaction.user.roles:
+                await interaction.user.remove_roles(snowwhite)
+                await interaction.user.remove_roles(blacksoul)
+                await interaction.user.remove_roles(orange)
+                await interaction.user.remove_roles(iceblue)
+                await interaction.user.remove_roles(pink)
+                await interaction.user.add_roles(gelb)
+                await interaction.followup.send(f"✅ Du hast die <@&1087310586435616839> Rolle erhalten.", ephemeral=True)
+        if select.values[0] == "6":
+            if snowwhite in interaction.user.roles or blacksoul in interaction.user.roles or orange in interaction.user.roles or gelb in interaction.user.roles or iceblue in interaction.user.roles:
+                await interaction.user.remove_roles(snowwhite)
+                await interaction.user.remove_roles(blacksoul)
+                await interaction.user.remove_roles(orange)
+                await interaction.user.remove_roles(gelb)
+                await interaction.user.remove_roles(iceblue)
+                await interaction.user.add_roles(pink)
+                await interaction.followup.send(f"✅ Du hast die <@&1087310603464478750> Rolle erhalten.", ephemeral=True)
