@@ -575,5 +575,62 @@ async def boosterroles(interaction: ApplicationContext):
     await interaction.channel.send(embed=embed, view=BoosterRolesView())
 
 
+# Bot Voice Chat
+@bot.event
+async def on_voice_state_update(member, before, after):
+    if after.channel is not None and after.channel.name == "➕⟫ VC erstellen":
+        guild = member.guild
+        category = after.channel.category
+        new_channel = await guild.create_voice_channel(name=member.display_name, category=category)
+        await member.move_to(new_channel)
+        embed = Embed(
+            title=f'Neuer Voice Channel erstellt für {member.display_name}')
+        message = await bot.get_channel(1087350554977640508).send(embed=embed)
+        await message.add_reaction('📝')  # Umbenennen Button Emoji
+        await message.add_reaction('👥')  # User Limit ändern Button Emoji
+
+        def check(reaction, user):
+            return user == member and str(reaction.emoji) in ['U+1F504', 'U+1F4B0']
+
+        while True:
+            try:
+                reaction, user = await bot.wait_for('reaction_add', timeout=60.0, check=check)
+            except TimeoutError:
+                await new_channel.delete()
+                break
+            else:
+                if str(reaction.emoji) == 'U+1F504':
+                    await message.clear_reactions()
+                    await message.edit(embed=Embed(title=f'Voice Channel umbenennen'))
+
+                    def check_name(message):
+                        return message.author == member and message.channel == 1087350554977640508
+                    try:
+                        msg = await bot.wait_for('message', timeout=60.0, check=check_name)
+                    except TimeoutError:
+                        await new_channel.edit(name=member.display_name)
+                    else:
+                        await new_channel.edit(name=msg.content)
+                    await message.clear_reactions()
+                    await message.add_reaction('U+1F504')
+                    await message.add_reaction('U+1F4B0')
+                elif str(reaction.emoji) == 'U+1F4B0':
+                    await message.clear_reactions()
+                    await message.edit(embed=Embed(title=f'User Limit ändern'))
+
+                    def check_limit(message):
+                        return message.author == member and message.channel == 1087350554977640508 and message.content.isdigit()
+                    try:
+                        msg = await bot.wait_for('message', timeout=60.0, check=check_limit)
+                    except TimeoutError:
+                        await new_channel.edit(user_limit=0)
+                    else:
+                        await new_channel.edit(user_limit=int(msg.content))
+                    await message.clear_reactions()
+                    await message.add_reaction('U+1F504')
+                    await message.add_reaction('U+1F4B0')
+
+        await new_channel.delete()
+
 bot.run(TOKEN)
 db.connection.close()
