@@ -8,6 +8,7 @@ from discord import (ApplicationContext, Bot, Embed,
 from enums import PunishmentType
 from pytimeparse.timeparse import timeparse
 from views import SupportTicketCreateView, MinecraftTicketCreateView, ReportUserModal, SupportModal, BugReportCreateView, SuggestionView, BanappealModal, BannappealView, BoosterRolesView
+from botvoiceview import ChannelSettingsView, LimitModal, EditModal, KickModal
 from PIL import Image, ImageDraw, ImageFont
 # import requests
 import io
@@ -577,17 +578,17 @@ async def boosterroles(interaction: ApplicationContext):
 
 # Bot Voice Chat
 @bot.event
-async def on_voice_state_update(member, before, after):
-    if after.channel is not None and after.channel.name == "➕⟫ VC erstellen":
+async def on_voice_state_update(member: Member, before, interaction: ApplicationContext):
+    if interaction.channel is not None and interaction.channel.name == "➕⟫ VC erstellen":
         guild = member.guild
-        category = after.channel.category
+        category = interaction.channel.category
         new_channel = await guild.create_voice_channel(name=member.display_name, category=category)
         await member.move_to(new_channel)
         embed = Embed(
             title=f'Neuer Voice Channel erstellt für {member.display_name}')
-        message = await bot.get_channel(1087350554977640508).send(embed=embed)
-        await message.add_reaction('📝')  # Umbenennen Button Emoji
-        await message.add_reaction('👥')  # User Limit ändern Button Emoji
+        message = await bot.get_channel(1087350554977640508).send(embed=embed, view=ChannelSettingsView())
+        # await message.add_reaction('📝')  # Umbenennen Button Emoji
+        # await message.add_reaction('👥')  # User Limit ändern Button Emoji
 
         def check(reaction, user):
             return user == member and str(reaction.emoji) in ['U+1F504', 'U+1F4B0']
@@ -631,6 +632,7 @@ async def on_voice_state_update(member, before, after):
                     await message.add_reaction('U+1F4B0')
 
         await new_channel.delete()
+
 
 bot.run(TOKEN)
 db.connection.close()
