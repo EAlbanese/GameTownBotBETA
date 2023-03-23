@@ -8,7 +8,7 @@ from discord import (ApplicationContext, Bot, Embed,
 from enums import PunishmentType
 from pytimeparse.timeparse import timeparse
 from views import SupportTicketCreateView, MinecraftTicketCreateView, ReportUserModal, SupportModal, BugReportCreateView, SuggestionView, BanappealModal, BannappealView, BoosterRolesView
-from botvoiceview import ChannelSettingsView, LimitModal, EditModal, KickModal, ChannelSettingsButtonView
+from botvoiceview import ChannelSettingsButtonView, LimitModal, EditModal, KickModal
 from PIL import Image, ImageDraw, ImageFont
 # import requests
 import io
@@ -585,27 +585,36 @@ async def on_voice_state_update(member: Member, before, after):
     if after.channel is not None and after.channel.name == "➕⟫ VC erstellen":
         after.channel = await guild.create_voice_channel(name=member.display_name, category=category)
         await member.move_to(after.channel)
-        embed = Embed(
-            title=f'Neuer Voice Channel erstellt für {member.display_name}')
-        embed.add_field(name="🔐 Privat",
-                        value="Stelle deinen Channel auf privat", inline=False)
-        embed.add_field(name="🔓 Öffentlich",
-                        value="Stelle deinen Channel auf öffentlich", inline=False)
-        embed.add_field(name="👥 Limitieren",
-                        value="Limitieren deinen Channel auf eine bestimmte Anzahl", inline=False)
-        embed.add_field(name="📝 Umbenennen",
-                        value="Ändere den Namen, deines Channels", inline=False)
-        embed.add_field(name="🦶 Kick",
-                        value="Kicke Member aus deinen Voice Channels", inline=False)
 
-        await bot.get_channel(1087350554977640508).send(embed=embed, view=ChannelSettingsButtonView())
+        logembed = Embed(
+            title=f"✅ Neuer Voice Channel erstellt für {member.display_name}")
+
+        await bot.get_channel(1088463685573431318).send(embed=logembed)
 
     if after.channel is None and before.channel.category == category and len(before.channel.members) == 0:
         await before.channel.delete()
         embed = Embed(
             title=f'✅ Voice Channel {before.channel.name} wurde gelöscht.')
-        await bot.get_channel(1087350554977640508).send(embed=embed)
+        await bot.get_channel(1088463685573431318).send(embed=embed)
 
+
+@bot.slash_command(description="Voice Channel Interface")
+async def interface(interaction: ApplicationContext):
+    embed = Embed(
+        title=f'Voice Channel Interface', description='Bearbeite deinen Voice Channel nach deiner wahl. Bei Probleme oder Hilfe gerne ein <#1070627031131357214>.')
+    embed.add_field(name="🔐 Privat",
+                    value="Stelle deinen Channel auf privat", inline=False)
+    embed.add_field(name="🔓 Öffentlich",
+                    value="Stelle deinen Channel auf öffentlich", inline=False)
+    embed.add_field(name="👥 Limitieren",
+                    value="Limitieren deinen Channel auf eine bestimmte Anzahl", inline=False)
+    embed.add_field(name="📝 Umbenennen",
+                    value="Ändere den Namen, deines Channels", inline=False)
+    embed.add_field(name="🦶 Kick",
+                    value="Kicke Member aus deinen Voice Channels", inline=False)
+
+    await interaction.respond("Interface wurde erstellt", ephemeral=True)
+    await interaction.send(embed=embed, view=ChannelSettingsButtonView())
 
 bot.run(TOKEN)
 db.connection.close()

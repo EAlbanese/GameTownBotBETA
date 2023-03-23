@@ -15,7 +15,7 @@ class ChannelSettingsButtonView(ui.View):
         overwrite.connect = False
         await voicechannel.set_permissions(interaction.guild.default_role, overwrite=overwrite)
         embed = Embed(
-            title=f"✅ Voice Channel wurde auf 🔐 PRIVAT 🔐 gesetzt")
+            title=f"✅ Voice Channel wurde geschlossen")
         await interaction.followup.send(embed=embed, ephemeral=True)
 
     @ ui.button(emoji="🔓", style=ButtonStyle.primary)
@@ -26,7 +26,7 @@ class ChannelSettingsButtonView(ui.View):
         overwrite.connect = True
         await voicechannel.set_permissions(interaction.guild.default_role, overwrite=overwrite)
         embed = Embed(
-            title=f"✅ Voice Channel wurde auf 🔓 ÖFFENTLICH 🔓 gesetzt")
+            title=f"✅ Voice Channel wurde geöffnet")
         await interaction.followup.send(embed=embed, ephemeral=True)
 
     @ ui.button(emoji="👥", style=ButtonStyle.primary)
@@ -54,13 +54,10 @@ class LimitModal(ui.Modal):
 
         voicechannel = interaction.user.voice.channel
         await voicechannel.edit(user_limit=self.children[0].value)
-
         embed = Embed(
             title=f"✅ Channel Limit wurde auf {self.children[0].value} Member gesetzt.")
-        channel = await interaction.guild.fetch_channel(1087350554977640508)
 
-        await interaction.response.send_message(f"Voice Channel wurde erfolgreich bearbeitet", ephemeral=True)
-        await channel.send(embed=embed)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 class EditModal(ui.Modal):
@@ -74,13 +71,10 @@ class EditModal(ui.Modal):
 
         voicechannel = interaction.user.voice.channel
         await voicechannel.edit(name=self.children[0].value)
-
         embed = Embed(
             title=f"✅ Channel wurde zu {self.children[0].value} umbenannt.")
-        channel = await interaction.guild.fetch_channel(1087350554977640508)
 
-        await interaction.response.send_message(f"Voice Channel wurde erfolgreich bearbeitet", ephemeral=True)
-        await channel.send(embed=embed)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 class KickModal(ui.Modal):
@@ -96,10 +90,7 @@ class KickModal(ui.Modal):
         for member in voicechannel.members:
             if member.name == self.children[0].value:
                 await member.move_to(None)
-
         embed = Embed(
             title=f"✅ {self.children[0].value} wurde aus dem Channel gekickt.")
-        channel = await interaction.guild.fetch_channel(1087350554977640508)
 
-        await interaction.response.send_message(f"Voice Channel wurde erfolgreich bearbeitet", ephemeral=True)
-        await channel.send(embed=embed)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
