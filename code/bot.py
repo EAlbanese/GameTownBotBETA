@@ -593,7 +593,8 @@ async def on_voice_state_update(member: Member, before, interaction: Application
         def check(reaction, user):
             return user == member and str(reaction.emoji) in ['U+1F504', 'U+1F4B0']
 
-        while True:
+        while new_channel.members != 0:
+            print("test")
             try:
                 reaction, user = await bot.wait_for('reaction_add', timeout=60.0, check=check)
             except TimeoutError:
@@ -631,7 +632,12 @@ async def on_voice_state_update(member: Member, before, interaction: Application
                     await message.add_reaction('U+1F504')
                     await message.add_reaction('U+1F4B0')
 
-        await new_channel.delete()
+        # if len(new_channel.members) == 0:
+        #     print("delete channel")
+        #     await new_channel.delete()
+        #     embed = Embed(
+        #         title=f'✅ {new_channel.name} wurde gelöscht.')
+        #     await interaction.send(embed=embed)
 
 
 bot.run(TOKEN)

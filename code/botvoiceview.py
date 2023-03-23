@@ -35,19 +35,32 @@ class ChannelSettingsView(ui.View):
         ]
     )
     async def tempvoice_select_callback(self, select, interaction: Interaction):
-        await interaction.response.defer()
 
         if select.values[0] == "1":
+            await interaction.response.defer()
+
             voicechannel = interaction.user.voice.channel
-            await interaction.followup.send(f"✅ Voice Channel wurde auf **PRIVAT** gesetzt", ephemeral=True)
+            overwrite = PermissionOverwrite()
+            overwrite.connect = False
+            await voicechannel.set_permissions(interaction.guild.default_role, overwrite=overwrite)
+            embed = Embed(
+                title=f"✅ Voice Channel wurde auf 🔐 PRIVAT 🔐 gesetzt")
+            await interaction.followup.send(embed=embed, ephemeral=True)
         if select.values[0] == "2":
-            await interaction.followup.send(f"✅ Voice Channel wurde auf **ÖFFENTLICH** gesetzt", ephemeral=True)
+            await interaction.response.defer()
+
+            voicechannel = interaction.user.voice.channel
+            overwrite = PermissionOverwrite()
+            overwrite.connect = True
+            await voicechannel.set_permissions(interaction.guild.default_role, overwrite=overwrite)
+            embed = Embed(
+                title=f"✅ Voice Channel wurde auf 🔓 ÖFFENTLICH 🔓 gesetzt")
+            await interaction.followup.send(embed=embed, ephemeral=True)
         if select.values[0] == "3":
             await interaction.response.send_modal(LimitModal(title="Voice Channel Limit setzen"))
         if select.values[0] == "4":
             voicechannel = interaction.user.voice.channel
-            await voicechannel.edit(name="test")
-            # await interaction.response.send_modal(EditModal(title="Voice Channel Umbenennen"))
+            await interaction.response.send_modal(EditModal(title="Voice Channel Umbenennen"))
         if select.values[0] == "5":
             await interaction.response.send_modal(KickModal(title="Member Kicken"))
 
@@ -58,14 +71,19 @@ class LimitModal(ui.Modal):
         super().__init__(*args, **kwargs, timeout=None)
 
         self.add_item(ui.InputText(
-            label="Voice Channel Limit setzen", style=InputTextStyle.long))
+            label="Voice Channel Limit setzen", style=InputTextStyle.short))
 
     async def callback(self, interaction: Interaction):
+
+        voicechannel = interaction.user.voice.channel
+        await voicechannel.edit(user_limit=self.children[0].value)
+
         embed = Embed(
             title=f"✅ Channel Limit wurde auf {self.children[0].value} Member gesetzt.")
         channel = await interaction.guild.fetch_channel(1087350554977640508)
 
-        await channel.send(embed=embed, ephemeral=True)
+        await interaction.response.send_message(f"Voice Channel wurde erfolgreich bearbeitet", ephemeral=True)
+        await channel.send(embed=embed)
 
 
 class EditModal(ui.Modal):
@@ -73,14 +91,19 @@ class EditModal(ui.Modal):
         super().__init__(*args, **kwargs, timeout=None)
 
         self.add_item(ui.InputText(
-            label="Voice Channel Umbenennen", style=InputTextStyle.long))
+            label="Voice Channel Umbenennen", style=InputTextStyle.short))
 
     async def callback(self, interaction: Interaction):
+
+        voicechannel = interaction.user.voice.channel
+        await voicechannel.edit(name=self.children[0].value)
+
         embed = Embed(
             title=f"✅ Channel wurde zu {self.children[0].value} umbenannt.")
         channel = await interaction.guild.fetch_channel(1087350554977640508)
 
-        await channel.send(embed=embed, ephemeral=True)
+        await interaction.response.send_message(f"Voice Channel wurde erfolgreich bearbeitet", ephemeral=True)
+        await channel.send(embed=embed)
 
 
 class KickModal(ui.Modal):
@@ -88,11 +111,18 @@ class KickModal(ui.Modal):
         super().__init__(*args, **kwargs, timeout=None)
 
         self.add_item(ui.InputText(
-            label="Wen möchtest du kicken", style=InputTextStyle.long))
+            label="Wen möchtest du kicken", style=InputTextStyle.short))
 
     async def callback(self, interaction: Interaction):
+
+        voicechannel = interaction.user.voice.channel
+        for member in voicechannel.members:
+            if member.name == self.children[0].value:
+                await member.move_to(None)
+
         embed = Embed(
             title=f"✅ {self.children[0].value} wurde aus dem Channel gekickt.")
         channel = await interaction.guild.fetch_channel(1087350554977640508)
 
-        await channel.send(embed=embed, ephemeral=True)
+        await interaction.response.send_message(f"Voice Channel wurde erfolgreich bearbeitet", ephemeral=True)
+        await channel.send(embed=embed)
