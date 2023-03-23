@@ -3,66 +3,43 @@ from discord import ui, ButtonStyle, InputTextStyle, Interaction, Embed, Permiss
 # Buttons
 
 
-class ChannelSettingsView(ui.View):
+class ChannelSettingsButtonView(ui.View):
     def __init__(self):
         super().__init__(timeout=None)
 
-    @ui.select(
-        placeholder="Einstellungen für deinen Voice Channel",
-        min_values=1,
-        max_values=1,
-        options=[
-            SelectOption(
-                label="🔐 Privat",
-                value='1'
-            ),
-            SelectOption(
-                label="🔓 Öffentlich",
-                value='2'
-            ),
-            SelectOption(
-                label="👥 Limit",
-                value='3'
-            ),
-            SelectOption(
-                label="📝 Umbenennen",
-                value='4'
-            ),
-            SelectOption(
-                label="🦶 Kick",
-                value='5'
-            ),
-        ]
-    )
-    async def tempvoice_select_callback(self, select, interaction: Interaction):
+    @ ui.button(emoji="🔐", style=ButtonStyle.primary)
+    async def private_button_callback(self, button, interaction: Interaction):
+        await interaction.response.defer()
+        voicechannel = interaction.user.voice.channel
+        overwrite = PermissionOverwrite()
+        overwrite.connect = False
+        await voicechannel.set_permissions(interaction.guild.default_role, overwrite=overwrite)
+        embed = Embed(
+            title=f"✅ Voice Channel wurde auf 🔐 PRIVAT 🔐 gesetzt")
+        await interaction.followup.send(embed=embed, ephemeral=True)
 
-        if select.values[0] == "1":
-            await interaction.response.defer()
+    @ ui.button(emoji="🔓", style=ButtonStyle.primary)
+    async def public_button_callback(self, button, interaction: Interaction):
+        await interaction.response.defer()
+        voicechannel = interaction.user.voice.channel
+        overwrite = PermissionOverwrite()
+        overwrite.connect = True
+        await voicechannel.set_permissions(interaction.guild.default_role, overwrite=overwrite)
+        embed = Embed(
+            title=f"✅ Voice Channel wurde auf 🔓 ÖFFENTLICH 🔓 gesetzt")
+        await interaction.followup.send(embed=embed, ephemeral=True)
 
-            voicechannel = interaction.user.voice.channel
-            overwrite = PermissionOverwrite()
-            overwrite.connect = False
-            await voicechannel.set_permissions(interaction.guild.default_role, overwrite=overwrite)
-            embed = Embed(
-                title=f"✅ Voice Channel wurde auf 🔐 PRIVAT 🔐 gesetzt")
-            await interaction.followup.send(embed=embed, ephemeral=True)
-        if select.values[0] == "2":
-            await interaction.response.defer()
+    @ ui.button(emoji="👥", style=ButtonStyle.primary)
+    async def limit_button_callback(self, button, interaction):
+        await interaction.response.send_modal(LimitModal(title="Limit"))
 
-            voicechannel = interaction.user.voice.channel
-            overwrite = PermissionOverwrite()
-            overwrite.connect = True
-            await voicechannel.set_permissions(interaction.guild.default_role, overwrite=overwrite)
-            embed = Embed(
-                title=f"✅ Voice Channel wurde auf 🔓 ÖFFENTLICH 🔓 gesetzt")
-            await interaction.followup.send(embed=embed, ephemeral=True)
-        if select.values[0] == "3":
-            await interaction.response.send_modal(LimitModal(title="Voice Channel Limit setzen"))
-        if select.values[0] == "4":
-            voicechannel = interaction.user.voice.channel
-            await interaction.response.send_modal(EditModal(title="Voice Channel Umbenennen"))
-        if select.values[0] == "5":
-            await interaction.response.send_modal(KickModal(title="Member Kicken"))
+    @ ui.button(emoji="📝", style=ButtonStyle.primary)
+    async def edit_button_callback(self, button, interaction):
+        await interaction.response.send_modal(EditModal(title="Umbenennen"))
+
+    @ ui.button(emoji="🦶", style=ButtonStyle.primary)
+    async def kick_button_callback(self, button, interaction):
+        await interaction.response.send_modal(KickModal(title="Kick"))
 
 
 # Modal

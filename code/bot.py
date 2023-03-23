@@ -8,7 +8,7 @@ from discord import (ApplicationContext, Bot, Embed,
 from enums import PunishmentType
 from pytimeparse.timeparse import timeparse
 from views import SupportTicketCreateView, MinecraftTicketCreateView, ReportUserModal, SupportModal, BugReportCreateView, SuggestionView, BanappealModal, BannappealView, BoosterRolesView
-from botvoiceview import ChannelSettingsView, LimitModal, EditModal, KickModal
+from botvoiceview import ChannelSettingsView, LimitModal, EditModal, KickModal, ChannelSettingsButtonView
 from PIL import Image, ImageDraw, ImageFont
 # import requests
 import io
@@ -578,66 +578,33 @@ async def boosterroles(interaction: ApplicationContext):
 
 # Bot Voice Chat
 @bot.event
-async def on_voice_state_update(member: Member, before, interaction: ApplicationContext):
-    if interaction.channel is not None and interaction.channel.name == "➕⟫ VC erstellen":
-        guild = member.guild
-        category = interaction.channel.category
-        new_channel = await guild.create_voice_channel(name=member.display_name, category=category)
-        await member.move_to(new_channel)
+async def on_voice_state_update(member: Member, before, after):
+    guild = member.guild
+    category = member.guild.get_channel(1087350527735640084)
+
+    if after.channel is not None and after.channel.name == "➕⟫ VC erstellen":
+        after.channel = await guild.create_voice_channel(name=member.display_name, category=category)
+        await member.move_to(after.channel)
         embed = Embed(
             title=f'Neuer Voice Channel erstellt für {member.display_name}')
-        message = await bot.get_channel(1087350554977640508).send(embed=embed, view=ChannelSettingsView())
-        # await message.add_reaction('📝')  # Umbenennen Button Emoji
-        # await message.add_reaction('👥')  # User Limit ändern Button Emoji
+        embed.add_field(name="🔐 Privat",
+                        value="Stelle deinen Channel auf privat", inline=False)
+        embed.add_field(name="🔓 Öffentlich",
+                        value="Stelle deinen Channel auf öffentlich", inline=False)
+        embed.add_field(name="👥 Limitieren",
+                        value="Limitieren deinen Channel auf eine bestimmte Anzahl", inline=False)
+        embed.add_field(name="📝 Umbenennen",
+                        value="Ändere den Namen, deines Channels", inline=False)
+        embed.add_field(name="🦶 Kick",
+                        value="Kicke Member aus deinen Voice Channels", inline=False)
 
-        def check(reaction, user):
-            return user == member and str(reaction.emoji) in ['U+1F504', 'U+1F4B0']
+        await bot.get_channel(1087350554977640508).send(embed=embed, view=ChannelSettingsButtonView())
 
-        while new_channel.members != 0:
-            print("test")
-            try:
-                reaction, user = await bot.wait_for('reaction_add', timeout=60.0, check=check)
-            except TimeoutError:
-                await new_channel.delete()
-                break
-            else:
-                if str(reaction.emoji) == 'U+1F504':
-                    await message.clear_reactions()
-                    await message.edit(embed=Embed(title=f'Voice Channel umbenennen'))
-
-                    def check_name(message):
-                        return message.author == member and message.channel == 1087350554977640508
-                    try:
-                        msg = await bot.wait_for('message', timeout=60.0, check=check_name)
-                    except TimeoutError:
-                        await new_channel.edit(name=member.display_name)
-                    else:
-                        await new_channel.edit(name=msg.content)
-                    await message.clear_reactions()
-                    await message.add_reaction('U+1F504')
-                    await message.add_reaction('U+1F4B0')
-                elif str(reaction.emoji) == 'U+1F4B0':
-                    await message.clear_reactions()
-                    await message.edit(embed=Embed(title=f'User Limit ändern'))
-
-                    def check_limit(message):
-                        return message.author == member and message.channel == 1087350554977640508 and message.content.isdigit()
-                    try:
-                        msg = await bot.wait_for('message', timeout=60.0, check=check_limit)
-                    except TimeoutError:
-                        await new_channel.edit(user_limit=0)
-                    else:
-                        await new_channel.edit(user_limit=int(msg.content))
-                    await message.clear_reactions()
-                    await message.add_reaction('U+1F504')
-                    await message.add_reaction('U+1F4B0')
-
-        # if len(new_channel.members) == 0:
-        #     print("delete channel")
-        #     await new_channel.delete()
-        #     embed = Embed(
-        #         title=f'✅ {new_channel.name} wurde gelöscht.')
-        #     await interaction.send(embed=embed)
+    if after.channel is None and before.channel.category == category and len(before.channel.members) == 0:
+        await before.channel.delete()
+        embed = Embed(
+            title=f'✅ Voice Channel {before.channel.name} wurde gelöscht.')
+        await bot.get_channel(1087350554977640508).send(embed=embed)
 
 
 bot.run(TOKEN)
