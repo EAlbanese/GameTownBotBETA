@@ -7,7 +7,7 @@ class ChannelSettingsButtonView(ui.View):
     def __init__(self):
         super().__init__(timeout=None)
 
-    @ ui.button(emoji="🔐", style=ButtonStyle.primary)
+    @ ui.button(emoji="🔐", style=ButtonStyle.gray)
     async def private_button_callback(self, button, interaction: Interaction):
         await interaction.response.defer()
         voicechannel = interaction.user.voice.channel
@@ -18,7 +18,7 @@ class ChannelSettingsButtonView(ui.View):
             title=f"✅ Voice Channel wurde geschlossen")
         await interaction.followup.send(embed=embed, ephemeral=True)
 
-    @ ui.button(emoji="🔓", style=ButtonStyle.primary)
+    @ ui.button(emoji="🔓", style=ButtonStyle.gray)
     async def public_button_callback(self, button, interaction: Interaction):
         await interaction.response.defer()
         voicechannel = interaction.user.voice.channel
@@ -29,15 +29,15 @@ class ChannelSettingsButtonView(ui.View):
             title=f"✅ Voice Channel wurde geöffnet")
         await interaction.followup.send(embed=embed, ephemeral=True)
 
-    @ ui.button(emoji="👥", style=ButtonStyle.primary)
+    @ ui.button(emoji="👥", style=ButtonStyle.gray)
     async def limit_button_callback(self, button, interaction):
         await interaction.response.send_modal(LimitModal(title="Limit"))
 
-    @ ui.button(emoji="📝", style=ButtonStyle.primary)
+    @ ui.button(emoji="📝", style=ButtonStyle.gray)
     async def edit_button_callback(self, button, interaction):
         await interaction.response.send_modal(EditModal(title="Umbenennen"))
 
-    @ ui.button(emoji="🦶", style=ButtonStyle.primary)
+    @ ui.button(emoji="🦶", style=ButtonStyle.gray)
     async def kick_button_callback(self, button, interaction):
         await interaction.response.send_modal(KickModal(title="Kick"))
 
