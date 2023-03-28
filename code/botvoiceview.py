@@ -1,8 +1,23 @@
 from discord import ui, ButtonStyle, InputTextStyle, Interaction, Embed, PermissionOverwrite, Client, ChannelType, SelectOption
 
+
+class variableManager(ui.View):
+    voice_channel = 0
+    voice_member = 0
+    user_count = 0
+
+
 # Buttons
+class KickSelectDropdownView(ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
 
-
+    @ui.select(placeholder="Einstellungen für deinen Voice Channel",
+               min_values=1,
+               max_values=1,
+               options=[
+                   SelectOption(f"{i+1} user{'s' if i != 0 else ''} in VC", value=f"{i+1}") for i in range(user_count)
+               ])
 class ChannelSettingsButtonView(ui.View):
     def __init__(self):
         super().__init__(timeout=None)
@@ -40,6 +55,45 @@ class ChannelSettingsButtonView(ui.View):
     @ ui.button(emoji="🦶", style=ButtonStyle.gray)
     async def kick_button_callback(self, button, interaction):
         await interaction.response.send_modal(KickModal(title="Kick"))
+
+        # variableManager.voice_channel = interaction.user.voice.channel
+        # variableManager.voice_member = variableManager.voice_channel.members
+        # variableManager.user_count = len(variableManager.voice_member)
+
+        # @ui.select(
+        #     placeholder="Wähle mind. einen User",
+        #     min_values=1,
+        #     max_values=len(user_count),
+        #     options=[
+        #         SelectOption(f"{i+1} user{'s' if i != 0 else ''} in VC", value=f"{i+1}") for i in range(user_count)
+        #     ]
+        # )
+        # await ctx.send("Select the number of users in the voice channel:",
+        #                components=[create_select(options=options, placeholder="Select a number", min_values=1, max_values=1)])
+
+
+# Kick Dropdown
+class KickMemberView(ui.View):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs, timeout=None)
+
+    @ui.select(
+        placeholder="Wähle mind. einen User",
+        min_values=1,
+        max_values=len(variableManager.user_count),
+        options=[
+            SelectOption(f"{i+1} user{'s' if i != 0 else ''} in VC", value=f"{i+1}") for i in range(variableManager.user_count)
+        ]
+    )
+    async def select_callback(self, select, interaction: Interaction):
+        voicechannel = interaction.user.voice.channel
+        for member in voicechannel.members:
+            if member.name == self.children[0].value:
+                await member.move_to(None)
+        embed = Embed(
+            title=f"✅ {self.children[0].value} wurde aus dem Channel gekickt.")
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 # Modal
