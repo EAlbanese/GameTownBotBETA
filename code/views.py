@@ -46,11 +46,20 @@ class TicketManageView(ui.View):
         if staffrole not in interaction.user.roles:
             await interaction.response.send_message("⛔ Keine Berechtigung!", ephemeral=True)
             return
+
+        button.disabled = True
+        button.label = f"Claimed von {interaction.user.name}"
+
+        await interaction.response.edit_message(view=self)
+
         embed = Embed(title="Ticket Status geändert: Wir sind dabei!",
                       description=f"<@{interaction.user.id}> kümmert sich um dein Ticket")
         embed.author.name = interaction.user.display_name
         embed.author.icon_url = interaction.user.display_avatar
-        await interaction.response.send_message(embed=embed)
+
+        channel = interaction.channel
+
+        await channel.send(embed=embed)
 
 
 # class TicketLogsView(ui.View):
